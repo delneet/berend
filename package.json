@@ -15,11 +15,15 @@
     "hubot-pugme": "^0.1.0",
     "hubot-redis-brain": "0.0.3",
     "hubot-rules": "^0.1.1",
-    "hubot-scripts": "^2.16.2",
+    "hubot-scripts": "*",
     "hubot-shipit": "^0.2.0",
     "hubot-slack": "^3.4.1",
     "hubot-standup-alarm": "^0.0.7",
-    "hubot-trello": "*"
+    "hubot-trello": "*",
+    "scraper": "0.0.9",
+    "chrono-node": "^0.1.10",
+    "moment": "^2.8.1",
+    "lodash": "^2.4.1"
   },
   "engines": {
     "node": "0.10.x",

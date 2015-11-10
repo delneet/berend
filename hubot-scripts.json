@@ -1,5 +1,5 @@
 [
-  "eardropping",
-  "howdoi",
-  "remind"
+  "eardropping.coffee",
+  "howdoi.coffee",
+  "remind.coffee"
 ]
