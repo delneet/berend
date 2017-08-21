@@ -13,7 +13,7 @@ module.exports =
         user_exists = userExists pull_req_assignee
         if data.assignee.login != data.sender.login && user_exists
           msg = createMessage(
-            "Wil je hier naar kijken @{pull_req_assignee}?",
+            "Wil je hier naar kijken @#{pull_req_assignee}?",
             repo.full_name,
             pull_req.title,
             pull_req.html_url,
@@ -24,7 +24,7 @@ module.exports =
         user_exists = userExists pull_req_reviewer
         if data.requested_reviewer.login != data.sender.login && user_exists
           msg = createMessage(
-            "Wil je hier naar kijken @{pull_req_reviewer}?",
+            "Wil je hier naar kijken @#{pull_req_reviewer}?",
             repo.full_name,
             pull_req.title,
             pull_req.html_url,
