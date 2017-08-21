@@ -20,7 +20,9 @@ module.exports =
         if data.requested_reviewer.login != data.sender.login && user_exists
           msg = "Zou je voor #{pull_req_sender} naar deze Pull Request in *#{repo.name}* willen kijken @#{pull_req_reviewer}? (#{pull_request_link})"
       when "opened"
-        msg = "#{pull_req_sender} heeft een nieuwe Pull Request gemaakt in *#{repo.name}* (#{pull_request_link})"
+        user_exists = userExists pull_req_sender
+        if user_exists
+          msg = "#{pull_req_sender} heeft een nieuwe Pull Request gemaakt in *#{repo.name}* (#{pull_request_link})"
   
     callback msg
 
@@ -68,7 +70,9 @@ module.exports =
         if issue.assignee.login != data.sender.login && user_exists
           msg = "#{issue_sender} heeft je toegewezen aan een Issue in *#{repo.name}* @#{issue_assignee} (#{issue_link})"
       when "opened"
-        msg = "#{issue_sender} heeft een nieuwe Issue gemaakt in *#{repo.name}* (#{issue_link})"
+        user_exists = userExists issue_sender
+        if user_exists
+          msg = "#{issue_sender} heeft een nieuwe Issue gemaakt in *#{repo.name}* (#{issue_link})"
 
     callback msg
 
