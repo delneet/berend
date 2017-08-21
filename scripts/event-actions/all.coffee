@@ -1,10 +1,9 @@
 module.exports =
   pull_request: (adapter, data, callback) ->
-    msg = ""
+    msg = {}
     repo = data.repository
     pull_req = data.pull_request
     pull_req_sender = data.sender.login
-    pull_request_link = formatUrl adapter, pull_req.html_url, "##{data.number} \"#{pull_req.title}\""
 
     action = data.action
 
@@ -13,50 +12,79 @@ module.exports =
         pull_req_assignee = slackUser data.assignee.login
         user_exists = userExists pull_req_assignee
         if data.assignee.login != data.sender.login && user_exists
-          msg = "Zou je voor #{pull_req_sender} naar deze Pull Request in *#{repo.name}* willen kijken @#{pull_req_assignee}? (#{pull_request_link})"
+          msg = createMessage(
+            "Wil je hier naar kijken @{pull_req_assignee}?",
+            repo.full_name,
+            pull_req.title,
+            pull_req.html_url,
+            "Pull Request van #{pull_req_sender}"
+          )
       when "review_requested"
         pull_req_reviewer = slackUser data.requested_reviewer.login
         user_exists = userExists pull_req_reviewer
         if data.requested_reviewer.login != data.sender.login && user_exists
-          msg = "Zou je voor #{pull_req_sender} naar deze Pull Request in *#{repo.name}* willen kijken @#{pull_req_reviewer}? (#{pull_request_link})"
+          msg = createMessage(
+            "Wil je hier naar kijken @{pull_req_reviewer}?",
+            repo.full_name,
+            pull_req.title,
+            pull_req.html_url,
+            "Pull Request van #{pull_req_sender}"
+          )
       when "opened"
-        msg = "#{pull_req_sender} heeft een nieuwe Pull Request gemaakt in *#{repo.name}* (#{pull_request_link})"
+        user_exists = userExists pull_req_sender
+        if user_exists
+          msg = createMessage(
+            "Nieuwe Pull Request",
+            repo.full_name,
+            pull_req.title,
+            pull_req.html_url,
+            "Pull Request van #{pull_req_sender}"
+          )
   
     callback msg
 
   pull_request_review: (adapter, data, callback) ->
-    msg = ""
+    msg = {}
     review = data.review
     pull_req = data.pull_request
     pull_req_owner = slackUser pull_req.user.login
     pull_req_reviewer = review.user.login
-    review_link = formatUrl adapter, review.html_url, pull_req.title
 
     user_exists = userExists pull_req_owner
     if pull_req.user.login != review.user.login && user_exists
-      msg = "#{pull_req_reviewer} heeft een review geplaatst bij je Pull Request @#{pull_req_owner} (#{review_link})"
+      msg = createMessage(
+        "Er is een review op je Pull Request geplaatst @#{pull_req_owner}",
+        repo.full_name,
+        pull_req.title,
+        review.html_url,
+        "Review geplaatst door #{pull_req_reviewer}"
+      )
 
     callback msg
 
   pull_request_review_comment: (adapter, data, callback) ->
-    msg = ""
+    msg = {}
     comment = data.comment
     pull_req = data.pull_request
     pull_req_owner = slackUser pull_req.user.login
     pull_req_commenter = comment.user.login
-    comment_link = formatUrl adapter, comment.html_url, pull_req.title
 
     user_exists = userExists pull_req_owner
     if pull_req.user.login != comment.user.login && user_exists
-      msg = "#{pull_req_commenter} heeft een comment geplaatst bij je Pull Request @#{pull_req_owner} (#{comment_link})"
+      msg = createMessage(
+        "Er is een comment op je Pull Request geplaatst @#{pull_req_owner}",
+        repo.full_name,
+        pull_req.title,
+        comment.html_url,
+        "Comment geplaatst door #{pull_req_commenter}"
+      )
 
     callback msg
 
   issues: (adapter, data, callback) ->
-    msg = ""
+    msg = {}
     repo = data.repository
     issue = data.issue
-    issue_link = formatUrl adapter, issue.html_url, "##{issue.number} \"#{issue.title}\""
     issue_sender = data.sender.login
 
     action = data.action
@@ -66,14 +94,28 @@ module.exports =
         issue_assignee = slackUser issue.assignee.login
         user_exists = userExists issue_assignee
         if issue.assignee.login != data.sender.login && user_exists
-          msg = "#{issue_sender} heeft je toegewezen aan een Issue in *#{repo.name}* @#{issue_assignee} (#{issue_link})"
+          msg = createMessage(
+            "Je bent toegewezen aan een Issue @#{issue_assignee}",
+            repo.full_name,
+            issue.title,
+            issue.html_url,
+            "Issue van #{issue_sender}"
+          )
       when "opened"
-        msg = "#{issue_sender} heeft een nieuwe Issue gemaakt in *#{repo.name}* (#{issue_link})"
+        user_exists = userExists issue_sender
+        if user_exists
+          msg = createMessage(
+            "Nieuwe Issue",
+            repo.full_name,
+            issue.title,
+            issue.html_url,
+            "Issue van #{issue_sender}"
+          )
 
     callback msg
 
   issue_comment: (adapter, data, callback) ->
-    msg = ""
+    msg = {}
     repo = data.repository
     issue = data.issue
     issue_owner = slackUser issue.user.login
@@ -88,7 +130,13 @@ module.exports =
 
     user_exists = userExists issue_owner
     if issue.user.login != comment.user.login && user_exists
-      msg = "#{comment_owner} heeft een comment geplaatst bij je #{issue_pull} @#{issue_owner} (#{comment_link})"
+      msg = createMessage(
+        "Er is een comment geplaatst op je #{issue_pull}",
+        repo.full_name,
+        "#{issue_pull} ##{issue.number}",
+        comment.html_url,
+        "Comment geplaatst door #{comment_owner}"
+      )
 
     callback msg
 
@@ -111,3 +159,13 @@ formatUrl = (adapter, url, text) ->
       "<#{url}|#{text}>"
     else
       url
+
+createMessage = (pretext, repo, title, link, text) ->
+  {
+    "color": "#36a64f",
+    "pretext": pretext,
+    "author_name": repo,
+    "title": title,
+    "title_link": link,
+    "text": text
+  }

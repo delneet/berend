@@ -10,23 +10,8 @@
 
 module.exports = (robot) ->
 
-  robot.hear /attachment/i, (res) ->
-    # create the message with attachment object
-    msgData = {
-      channel: res.message.room
-      text: "Latest changes"
-      attachments: [
-        {
-          fallback: "Comparing test",
-          title: "Comparing test"
-          title_link: 'http://www.google.nl'
-          text: 'Dit is een test'
-        }
-      ]
-    }
-
-    # post the message
-    robot.adapter.customMessage msgData
+  # robot.hear /badger/i, (res) ->
+  #   res.send "Badgers? BADGERS? WE DON'T NEED NO STINKIN BADGERS"
   #
   # robot.respond /open the (.*) doors/i, (res) ->
   #   doorType = res.match[1]
