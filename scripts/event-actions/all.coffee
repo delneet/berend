@@ -140,20 +140,23 @@ module.exports =
     callback msg
 
   status: (data, callback) ->
+    msg = {}
     repo = data.repository
     state = data.state
     color = buildStatusColor state
     branch_name = data.branches[0].name
     build_starter = slackUser data.commit.committer.login
 
-    msg = createMessage(
-      repo.full_name,
-      "#{branch_name} - #{build_starter}",
-      data.target_url,
-      data.description,
-      "wesley",
-      color
-    )
+    user_exists = userExists build_starter
+    if user_exists
+      msg = createMessage(
+        repo.full_name,
+        "Jenkins: #{branch_name}",
+        data.target_url,
+        data.description,
+        build_starter,
+        color
+      )
     
     callback msg
 
@@ -175,7 +178,7 @@ createMessage = (repo, title, link, text, room, color) ->
   {
     channel: room || default_room, 
     attachments: [{
-      "color": color || "#36a64f",
+      "color": color || "#3AA3E3",
       "author_name": repo,
       "title": title,
       "title_link": link,
@@ -186,7 +189,7 @@ createMessage = (repo, title, link, text, room, color) ->
 buildStatusColor = (state) ->
   switch state
     when "success"
-      return "#09ff00"
+      return "#36a64f"
     when "failure" || "error"
       return "#ff0000"
     when "pending"
