@@ -3,7 +3,7 @@ module.exports =
     msg = {}
     repo = data.repository
     pull_req = data.pull_request
-    pull_req_sender = data.sender.login
+    pull_req_sender = slackUser data.sender.login
 
     action = data.action
 
@@ -13,32 +13,31 @@ module.exports =
         user_exists = userExists pull_req_assignee
         if data.assignee.login != data.sender.login && user_exists
           msg = createMessage(
-            "Wil je hier naar kijken @#{pull_req_assignee}?",
             repo.full_name,
             pull_req.title,
             pull_req.html_url,
-            "Pull Request van #{pull_req_sender}"
+            "Wil je naar de Pull Request van #{pull_req_sender} kijken?",
+            pull_req_assignee
           )
       when "review_requested"
         pull_req_reviewer = slackUser data.requested_reviewer.login
         user_exists = userExists pull_req_reviewer
         if data.requested_reviewer.login != data.sender.login && user_exists
           msg = createMessage(
-            "Wil je hier naar kijken @#{pull_req_reviewer}?",
             repo.full_name,
             pull_req.title,
             pull_req.html_url,
-            "Pull Request van #{pull_req_sender}"
+            "Wil je naar de Pull Request van #{pull_req_sender} kijken?",
+            pull_req_reviewer
           )
       when "opened"
         user_exists = userExists pull_req_sender
         if user_exists
           msg = createMessage(
-            "Nieuwe Pull Request",
             repo.full_name,
             pull_req.title,
             pull_req.html_url,
-            "Pull Request van #{pull_req_sender}"
+            "Nieuwe Pull Request aangemaakt door #{pull_req_sender}"
           )
   
     callback msg
@@ -49,16 +48,16 @@ module.exports =
     review = data.review
     pull_req = data.pull_request
     pull_req_owner = slackUser pull_req.user.login
-    pull_req_reviewer = review.user.login
+    pull_req_reviewer = slackUser review.user.login
 
     user_exists = userExists pull_req_owner
     if pull_req.user.login != review.user.login && user_exists
       msg = createMessage(
-        "Er is een review op je Pull Request geplaatst @#{pull_req_owner}",
         repo.full_name,
         pull_req.title,
         review.html_url,
-        "Review geplaatst door #{pull_req_reviewer}"
+        "#{pull_req_reviewer} heeft een review geplaatst op je Pull Request",
+        pull_req_owner
       )
 
     callback msg
@@ -69,16 +68,16 @@ module.exports =
     comment = data.comment
     pull_req = data.pull_request
     pull_req_owner = slackUser pull_req.user.login
-    pull_req_commenter = comment.user.login
+    pull_req_commenter = slackUser comment.user.login
 
     user_exists = userExists pull_req_owner
     if pull_req.user.login != comment.user.login && user_exists
       msg = createMessage(
-        "Er is een comment op je Pull Request geplaatst @#{pull_req_owner}",
         repo.full_name,
         pull_req.title,
         comment.html_url,
-        "Comment geplaatst door #{pull_req_commenter}"
+        "#{pull_req_commenter} heeft een comment geplaatst op je Pull Request",
+        pull_req_owner
       )
 
     callback msg
@@ -87,7 +86,7 @@ module.exports =
     msg = {}
     repo = data.repository
     issue = data.issue
-    issue_sender = data.sender.login
+    issue_sender = slackUser data.sender.login
 
     action = data.action
 
@@ -95,23 +94,22 @@ module.exports =
       when "assigned"
         issue_assignee = slackUser issue.assignee.login
         user_exists = userExists issue_assignee
-        if issue.assignee.login != data.sender.login && user_exists
+        if user_exists
           msg = createMessage(
-            "Je bent toegewezen aan een Issue @#{issue_assignee}",
             repo.full_name,
             issue.title,
             issue.html_url,
-            "Issue van #{issue_sender}"
+            "Je bent toegewezen aan een Issue van #{issue_sender}",
+            issue_assignee
           )
       when "opened"
         user_exists = userExists issue_sender
         if user_exists
           msg = createMessage(
-            "Nieuwe Issue",
             repo.full_name,
             issue.title,
             issue.html_url,
-            "Issue van #{issue_sender}"
+            "Nieuwe Issue aangemaakt door #{issue_sender}"
           )
 
     callback msg
@@ -122,7 +120,7 @@ module.exports =
     issue = data.issue
     issue_owner = slackUser issue.user.login
     comment = data.comment
-    comment_owner = comment.user.login
+    comment_owner = slackUser comment.user.login
     comment_link = formatUrl adapter, comment.html_url, "#{issue_pull} ##{issue.number}"
 
     issue_pull = "Issue"
@@ -133,11 +131,11 @@ module.exports =
     user_exists = userExists issue_owner
     if issue.user.login != comment.user.login && user_exists
       msg = createMessage(
-        "Er is een comment geplaatst op je #{issue_pull} @#{issue_owner}",
         repo.full_name,
         "#{issue_pull} ##{issue.number}",
         comment.html_url,
-        "Comment geplaatst door #{comment_owner}"
+        "#{comment_owner} heeft een comment geplaatst op je #{issue_pull}",
+        issue_owner
       )
 
     callback msg
@@ -162,12 +160,15 @@ formatUrl = (adapter, url, text) ->
     else
       url
 
-createMessage = (pretext, repo, title, link, text) ->
+createMessage = (repo, title, link, text, room) ->
+  default_room = process.env["HUBOT_GITHUB_EVENT_NOTIFIER_ROOM"]
   {
-    "color": "#36a64f",
-    "pretext": pretext,
-    "author_name": repo,
-    "title": title,
-    "title_link": link,
-    "text": text
+    channel: room || default_room, 
+    attachments: [{
+      "color": "#36a64f",
+      "author_name": repo,
+      "title": title,
+      "title_link": link,
+      "text": text
+    }] 
   }
