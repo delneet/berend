@@ -10,8 +10,16 @@
 
 module.exports = (robot) ->
 
-  # robot.hear /badger/i, (res) ->
-  #   res.send "Badgers? BADGERS? WE DON'T NEED NO STINKIN BADGERS"
+  robot.hear /test/i, (res) ->
+    room = robot.adapter.client.rtm.dataStore.getDMByName "wesley"
+    data = {
+      "color": "#36a64f",
+      "author_name": "dit/is/een/test",
+      "title": "Dit is een test",
+      "title_link": "http://www.google.nl",
+      "text": "Test"
+    }
+    robot.adapter.customMessage { channel: room.id, attachments: [data] }
   #
   # robot.respond /open the (.*) doors/i, (res) ->
   #   doorType = res.match[1]

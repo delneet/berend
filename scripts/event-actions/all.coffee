@@ -133,7 +133,7 @@ module.exports =
     user_exists = userExists issue_owner
     if issue.user.login != comment.user.login && user_exists
       msg = createMessage(
-        "Er is een comment geplaatst op je #{issue_pull}",
+        "Er is een comment geplaatst op je #{issue_pull} @#{issue_owner}",
         repo.full_name,
         "#{issue_pull} ##{issue.number}",
         comment.html_url,
