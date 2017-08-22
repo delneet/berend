@@ -45,6 +45,7 @@ module.exports =
 
   pull_request_review: (adapter, data, callback) ->
     msg = {}
+    repo = data.repository
     review = data.review
     pull_req = data.pull_request
     pull_req_owner = slackUser pull_req.user.login
@@ -64,6 +65,7 @@ module.exports =
 
   pull_request_review_comment: (adapter, data, callback) ->
     msg = {}
+    repo = data.repository
     comment = data.comment
     pull_req = data.pull_request
     pull_req_owner = slackUser pull_req.user.login
