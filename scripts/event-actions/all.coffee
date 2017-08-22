@@ -94,7 +94,7 @@ module.exports =
       when "assigned"
         issue_assignee = slackUser issue.assignee.login
         user_exists = userExists issue_assignee
-        if user_exists
+        if issue.assignee.login != data.sender.login && user_exists
           msg = createMessage(
             repo.full_name,
             issue.title,
