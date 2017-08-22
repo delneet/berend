@@ -1,5 +1,5 @@
 module.exports =
-  pull_request: (adapter, data, callback) ->
+  pull_request: (data, callback) ->
     msg = {}
     repo = data.repository
     pull_req = data.pull_request
@@ -42,7 +42,7 @@ module.exports =
   
     callback msg
 
-  pull_request_review: (adapter, data, callback) ->
+  pull_request_review: (data, callback) ->
     msg = {}
     repo = data.repository
     review = data.review
@@ -62,7 +62,7 @@ module.exports =
 
     callback msg
 
-  pull_request_review_comment: (adapter, data, callback) ->
+  pull_request_review_comment: (data, callback) ->
     msg = {}
     repo = data.repository
     comment = data.comment
@@ -82,7 +82,7 @@ module.exports =
 
     callback msg
 
-  issues: (adapter, data, callback) ->
+  issues: (data, callback) ->
     msg = {}
     repo = data.repository
     issue = data.issue
@@ -114,14 +114,13 @@ module.exports =
 
     callback msg
 
-  issue_comment: (adapter, data, callback) ->
+  issue_comment: (data, callback) ->
     msg = {}
     repo = data.repository
     issue = data.issue
     issue_owner = slackUser issue.user.login
     comment = data.comment
     comment_owner = slackUser comment.user.login
-    comment_link = formatUrl adapter, comment.html_url, "#{issue_pull} ##{issue.number}"
 
     issue_pull = "Issue"
 
@@ -140,6 +139,24 @@ module.exports =
 
     callback msg
 
+  status: (data, callback) ->
+    repo = data.repository
+    state = data.state
+    color = buildStatusColor state
+    branch_name = data.branches[0].name
+    build_starter = slackUser data.commit.committer.login
+
+    msg = createMessage(
+      repo.full_name,
+      "#{branch_name} - #{build_starter}",
+      data.target_url,
+      data.description,
+      "wesley",
+      color
+    )
+    
+    callback msg
+
 slackUser = (username) ->
   for user in process.env['HUBOT_GITHUB_USERS'].split(',')
     do ->
@@ -153,22 +170,24 @@ slackUser = (username) ->
 userExists = (username) ->
   process.env['HUBOT_GITHUB_USERS'].indexOf(username) > -1
 
-formatUrl = (adapter, url, text) ->
-  switch adapter
-    when "mattermost" || "slack"
-      "<#{url}|#{text}>"
-    else
-      url
-
-createMessage = (repo, title, link, text, room) ->
+createMessage = (repo, title, link, text, room, color) ->
   default_room = process.env["HUBOT_GITHUB_EVENT_NOTIFIER_ROOM"]
   {
     channel: room || default_room, 
     attachments: [{
-      "color": "#36a64f",
+      "color": color || "#36a64f",
       "author_name": repo,
       "title": title,
       "title_link": link,
       "text": text
     }] 
   }
+
+buildStatusColor = (state) ->
+  switch state
+    when "success"
+      return "#09ff00"
+    when "failure" || "error"
+      return "#ff0000"
+    when "pending"
+      return "#FFA500"

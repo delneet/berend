@@ -26,7 +26,6 @@ module.exports = (robot) ->
     room = query.room || process.env["HUBOT_GITHUB_EVENT_NOTIFIER_ROOM"]
     eventType = req.headers["x-github-event"]
     robot.logger.debug "github-repo-event-notifier: Processing event type: \"#{eventType}\"..."
-    adapter = robot.adapterName
 
     try
 
@@ -52,7 +51,7 @@ module.exports = (robot) ->
           return false # no match, fail
 
       if filter_parts.length > 0
-        announceRepoEvent adapter, data, eventType, (what) ->
+        announceRepoEvent data, eventType, (what) ->
           if Object.keys(what).length > 0
             robot.adapter.customMessage what
       else
@@ -63,8 +62,8 @@ module.exports = (robot) ->
 
     res.end ""
 
-announceRepoEvent = (adapter, data, eventType, cb) ->
+announceRepoEvent = (data, eventType, cb) ->
   if eventActions[eventType]?
-    eventActions[eventType](adapter, data, cb)
+    eventActions[eventType](data, cb)
   else
     cb("Received a new #{eventType} event, just so you know.")
