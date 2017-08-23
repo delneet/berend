@@ -190,7 +190,7 @@ buildStatusColor = (state) ->
   switch state
     when "success"
       return "#36a64f"
-    when "failure" || "error"
+    when "failed" || "error"
       return "#ff0000"
     when "pending"
       return "#FFA500"
