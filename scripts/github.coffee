@@ -1,6 +1,4 @@
 inspect = (require('util')).inspect
-url = require('url')
-querystring = require('querystring')
 eventActions = require('./event-actions/all')
 eventTypesRaw = process.env['HUBOT_GITHUB_EVENT_NOTIFIER_TYPES']
 eventTypes = []
@@ -19,12 +17,9 @@ else
 
 module.exports = (robot) ->
   robot.router.post "/hubot/gh-repo-events", (req, res) ->
-    query = querystring.parse(url.parse(req.url).query)
-
     data = req.body
-    robot.logger.debug "github-repo-event-notifier: Received POST to /hubot/gh-repo-events with data = #{inspect data}"
-    room = query.room || process.env["HUBOT_GITHUB_EVENT_NOTIFIER_ROOM"]
     eventType = req.headers["x-github-event"]
+    robot.logger.debug "github-repo-event-notifier: Received POST to /hubot/gh-repo-events with data = #{inspect data}"
     robot.logger.debug "github-repo-event-notifier: Processing event type: \"#{eventType}\"..."
 
     try
@@ -57,7 +52,7 @@ module.exports = (robot) ->
       else
         console.log "Ignoring #{eventType}:#{data.action} as it's not allowed."
     catch error
-      robot.messageRoom room, "Whoa, I got an error: #{error}"
+      robot.messageRoom process.env["HUBOT_GITHUB_EVENT_NOTIFIER_ROOM"], "Whoa, I got an error: #{error}"
       console.log "Github repo event notifier error: #{error}. Request: #{req.body}"
 
     res.end ""
@@ -66,4 +61,4 @@ announceRepoEvent = (data, eventType, cb) ->
   if eventActions[eventType]?
     eventActions[eventType](data, cb)
   else
-    cb("Received a new #{eventType} event, just so you know.")
+    console.log "Received a new #{eventType} event, just so you know."
