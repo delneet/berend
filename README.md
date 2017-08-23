@@ -27,14 +27,14 @@ The following environment variables are required to run Berend. See .env.example
 
 ```
 HEROKU_URL
-HUBOT_GITHUB_EVENT_NOTIFIER_ROOM // name of global chatroom in Slack
-HUBOT_GITHUB_EVENT_NOTIFIER_TYPES // Accepted GitHub events
-HUBOT_GITHUB_USERS // Mapping of GitHub/Slack users (wesleydebruijn:wesley)
-HUBOT_HEROKU_KEEPALIVE_URL // Heroku URL
-HUBOT_SLACK_BOTNAME // Slack name
-HUBOT_SLACK_TEAM // Slack team name
-HUBOT_SLACK_TOKEN // Token to get access to Slack
-TZ // Timezone
+HUBOT_GITHUB_EVENT_NOTIFIER_ROOM    // Name of global chatroom in Slack
+HUBOT_GITHUB_EVENT_NOTIFIER_TYPES   // Accepted GitHub events
+HUBOT_GITHUB_USERS                  // Mapping of GitHub/Slack users (wesleydebruijn:wesley)
+HUBOT_HEROKU_KEEPALIVE_URL          // Heroku URL
+HUBOT_SLACK_BOTNAME                 // Slack name
+HUBOT_SLACK_TEAM                    // Slack team name
+HUBOT_SLACK_TOKEN                   // Token to get access to Slack
+TZ                                  // Timezone
 
 ```
 
