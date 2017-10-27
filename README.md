@@ -19,24 +19,5 @@ Berend will notify a developer directly when:
 * a build is started in Jenkins of his/her commit in a branch
 * a build has finished in Jenkins of his/her commit in a branch
 
-## Configuration
-Berend can easily be deployed on a free Heroku instance. Only the GitHub repository needs to be connected in Heroku and you're good to go.
-
-### Environment variables
-The following environment variables are required to run Berend. See .env.example for an example.
-
-```
-HEROKU_URL
-HUBOT_GITHUB_EVENT_NOTIFIER_ROOM    // Name of global chatroom in Slack
-HUBOT_GITHUB_EVENT_NOTIFIER_TYPES   // Accepted GitHub events
-HUBOT_GITHUB_USERS                  // Mapping of GitHub/Slack users (wesleydebruijn:wesley)
-HUBOT_HEROKU_KEEPALIVE_URL          // Heroku URL
-HUBOT_SLACK_BOTNAME                 // Slack name
-HUBOT_SLACK_TEAM                    // Slack team name
-HUBOT_SLACK_TOKEN                   // Token to get access to Slack
-TZ                                  // Timezone
-
-```
-
 ### Webhooks
 Webhooks need to be configured in the desired repositories to make Berend aware of any activity in these repositories.
