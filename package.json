@@ -19,7 +19,7 @@
     "scraper": "0.0.9"
   },
   "engines": {
-    "npm": "*"
     "node": "8.8",
+    "yarn": "*"
   }
 }
