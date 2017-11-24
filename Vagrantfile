@@ -43,5 +43,6 @@ Vagrant.configure("2") do |config|
                       compose_version: '1.17.1',
                       yml:             '/vagrant/docker-compose.yml',
                       project_name:    'berend',
-                      run:             'always'
+                      run:             'always',
+                      rebuild:         true
 end
