@@ -1,6 +1,6 @@
 {
   "name": "Berend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "author": "Daniel <danieldelnaaij@gmail.com>",
   "description": "Berend Botje",
@@ -9,9 +9,7 @@
     "hubot": "^2.16.0",
     "hubot-diagnostics": "0.0.1",
     "hubot-help": "^0.1.2",
-    "hubot-heroku-keepalive": "^1.0.0",
     "hubot-redis-brain": "0.0.3",
-    "hubot-rules": "^0.1.1",
     "hubot-scripts": "*",
     "hubot-slack": "^3.4.1",
     "lodash": "^2.4.1",
@@ -19,7 +17,7 @@
     "scraper": "0.0.9"
   },
   "engines": {
-    "node": "8.1.4",
-    "npm": "*"
+    "node": "8.8",
+    "yarn": "*"
   }
 }

@@ -1,0 +1,9 @@
+version: '2'
+services:
+  bot:
+    build: .
+    command: "/berend/bin/hubot --adapter slack"
+    ports:
+    - "8080:8080"
+    env_file:
+    - .env
