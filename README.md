@@ -4,6 +4,8 @@ Berend is a chat bot built on the Hubot framework. It is used to notify develope
 
 Berend is currently maintained by @delneet and @wesleydebruijn
 
+## ⚠️ Berend is archived
+
 ## What can Berend do?
 Berend is constantly listening to events pushed by GitHub and can send Slack messages in global chatrooms and can also send direct messages to developers.
 
